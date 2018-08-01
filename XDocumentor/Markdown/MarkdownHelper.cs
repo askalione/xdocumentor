@@ -19,7 +19,7 @@ namespace XDocumentor.Markdown
             return Regex.Replace(isFull ? t.GetGenericTypeDefinition().FullName : t.GetGenericTypeDefinition().Name, @"`.+$", "") + "<" + innerFormat + ">";
         }
 
-        public static string RenderMethodInfo(MethodInfo methodInfo)
+        public static string RenderMethodInfo(MethodBase methodInfo)
         {
             var isExtension = methodInfo.GetCustomAttributes<System.Runtime.CompilerServices.ExtensionAttribute>(false).Any();
 
@@ -29,7 +29,7 @@ namespace XDocumentor.Markdown
                 return "`" + RenderType(x.ParameterType) + "` " + x.Name + suffix;
             });
 
-            return methodInfo.Name + "(" + (isExtension ? "this " : "") + string.Join(", ", seq) + ")";
+            return (methodInfo.IsConstructor ? methodInfo.DeclaringType.Name : methodInfo.Name) + "(" + (isExtension ? "this " : "") + string.Join(", ", seq) + ")";
         }
 
         public static string RenderCode(string code)

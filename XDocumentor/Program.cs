@@ -11,42 +11,17 @@ namespace XDocumentor
     {
         static void Main(string[] args)
         {
-            var target = "Debug/Elibrary.Builder.dll";
-            string dest = "Debug/md";
-            MarkdownGenerateMode generateMode = MarkdownGenerateMode.FilePerClass;
-            string namespaceMatch = string.Empty;
-            if (args.Length == 1)
-            {
-                target = args[0];
-            }
-            else if (args.Length == 2)
-            {
-                target = args[0];
-                dest = args[1];
-            }
-            else if (args.Length == 3)
-            {
-                target = args[0];
-                dest = args[1];
-                generateMode = Enum.Parse<MarkdownGenerateMode>(args[2]);
-            }
-            else if (args.Length == 4)
-            {
-                target = args[0];
-                dest = args[1];
-                generateMode = Enum.Parse<MarkdownGenerateMode>(args[2]);
-                namespaceMatch = args[3];
-            }
+            GenerationOptions options = new GenerationOptions(args);
 
-            var types = MarkdownGenerator.BuildFrom(target, namespaceMatch);
+            var types = MarkdownGenerator.BuildFrom(options.Target, options.NamespaceMatch, options.AccessibilityLevel);
 
             if (types.Length == 0)
                 return;
 
-            if (!Directory.Exists(dest)) Directory.CreateDirectory(dest);
+            if (!Directory.Exists(options.Output)) Directory.CreateDirectory(options.Output);
             else
             {
-                var directory = new DirectoryInfo(dest);
+                DirectoryInfo directory = new DirectoryInfo(options.Output);
                 foreach (FileInfo file in directory.GetFiles()) file.Delete();
                 foreach (DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
             }
@@ -55,19 +30,19 @@ namespace XDocumentor
             homeBuilder.Header(1, "Contents");
             homeBuilder.AppendLine();
             
-            switch (generateMode)
+            switch (options.Mode)
             {
-                case MarkdownGenerateMode.FilePerClass:
-                    GenerateFilePerClass(homeBuilder, dest, types);
+                case GenerationMode.FilePerClass:
+                    GenerateFilePerClass(homeBuilder, options.Output, types);
                     break;
-                case MarkdownGenerateMode.FilePerNamespace:
-                    GenerateFilePerNamespace(homeBuilder, dest, types);
+                case GenerationMode.FilePerNamespace:
+                    GenerateFilePerNamespace(homeBuilder, options.Output, types);
                     break;
                 default:
-                    throw new Exception("Unknown MarkdownGenerateMode");
+                    throw new Exception("Unknown generation mode");
             }
 
-            File.WriteAllText(Path.Combine(dest, "Home.md"), homeBuilder.ToString());
+            File.WriteAllText(Path.Combine(options.Output, "Home.md"), homeBuilder.ToString());
         }
 
         private static void GenerateFilePerClass(MarkdownBuilder homeBuilder, string dest, MarkdownableType[] types)
@@ -83,12 +58,11 @@ namespace XDocumentor
                 
                 foreach (var item in g.OrderBy(x => x.Name))
                 {
-                    string renderedDisplayName = item.DisplayName.Replace("<", "").Replace(">", "").Replace(",", "").Replace(" ", "-");
                     var sb = new StringBuilder();
-                    homeBuilder.ListLink(MarkdownHelper.RenderCode(item.DisplayName), g.Key + "/" + renderedDisplayName);
+                    homeBuilder.ListLink(MarkdownHelper.RenderCode(item.DisplayName), g.Key + "/" + item.ProcessedName);
                     sb.Append(item.ToString());
 
-                    File.WriteAllText(Path.Combine(namespacePath, renderedDisplayName + ".md"), sb.ToString());
+                    File.WriteAllText(Path.Combine(namespacePath, item.ProcessedName + ".md"), sb.ToString());
                 }
                                 
                 homeBuilder.AppendLine();
@@ -105,7 +79,7 @@ namespace XDocumentor
                 var sb = new StringBuilder();
                 foreach (var item in g.OrderBy(x => x.Name))
                 {
-                    homeBuilder.ListLink(MarkdownHelper.RenderCode(item.DisplayName), g.Key + "#" + item.DisplayName.Replace("<", "").Replace(">", "").Replace(",", "").Replace(" ", "-").ToLower());
+                    homeBuilder.ListLink(MarkdownHelper.RenderCode(item.DisplayName), g.Key + "#" + item.ProcessedName.ToLower());
 
                     sb.Append(item.ToString());
                 }

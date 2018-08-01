@@ -91,9 +91,11 @@ namespace XDocumentor.Markdown
             _sb.Append("`");
         }
 
-        public void Table(string[] headers, IEnumerable<string[]> items)
+        public void Table(string[] headers, IEnumerable<string[]> items, bool indent = false)
         {
-            _sb.Append("| ");
+            string tableIndent = indent ? "   " : "";
+
+            _sb.Append(tableIndent + "| ");
             foreach (var item in headers)
             {
                 _sb.Append(item);
@@ -101,7 +103,7 @@ namespace XDocumentor.Markdown
             }
             _sb.AppendLine();
 
-            _sb.Append("| ");
+            _sb.Append(tableIndent + "| ");
             foreach (var item in headers)
             {
                 _sb.Append("---");
@@ -112,7 +114,7 @@ namespace XDocumentor.Markdown
 
             foreach (var item in items)
             {
-                _sb.Append("| ");
+                _sb.Append(tableIndent + "| ");
                 foreach (var item2 in item)
                 {
                     _sb.Append(item2);
@@ -128,11 +130,17 @@ namespace XDocumentor.Markdown
             _sb.Append("- ");
             _sb.AppendLine(text);
         }
-
+        
         public void ListLink(string text, string url)
         {
             _sb.Append("- ");
             Link(text, url);
+            _sb.AppendLine();
+        }
+
+        public void HorizontalRule()
+        {
+            _sb.Append("---");
             _sb.AppendLine();
         }
 
