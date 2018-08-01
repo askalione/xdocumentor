@@ -26,4 +26,4 @@ After execution, a directory markdown with  Markdown files will be created in sa
 
 ## License
 
-XDocumentor is Copyright © 2018  [Alexey Drapash](https://github.com/askalione), [Creacode](http://creacode.ru)  under the  [MIT license]().
+XDocumentor is Copyright © 2018  [Alexey Drapash](https://github.com/askalione), [Creacode](http://creacode.ru)  under the  [MIT license](https://github.com/askalione/xdocumentor/blob/master/LICENSE).
