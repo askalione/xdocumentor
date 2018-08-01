@@ -1,15 +1,17 @@
 # XDocumentor
 
-Markdown generator for C# projects. The initial data for generation are the .dll files (compiled project) and .xml (xml comments in the project compiled by Visual Studio).
+.NET Core Markdown generator for C# projects. The initial data for generation are the .dll files (compiled project) and .xml (xml comments in the project compiled by Visual Studio).
 
 Based on [MarkdownGenerator](https://github.com/neuecc/MarkdownGenerator) by [neuecc](https://github.com/neuecc).
 
 ## Example
 
 For generate Markdown put .dll and .xml project files in same directory with XDocumentor.exe and use command:
+
 ```csharp
 XDocumentor.exe MyProject.dll markdown 0 0
 ```
+
 After execution, a directory markdown with  Markdown files will be created in same directory.
 
 ## Arguments
@@ -24,4 +26,4 @@ After execution, a directory markdown with  Markdown files will be created in sa
 
 ## License
 
-XDocumentor is Copyright © 2018  [Alexey Drapash](https://github.com/askalione)  under the  [MIT license]().
+XDocumentor is Copyright © 2018  [Alexey Drapash](https://github.com/askalione), [Creacode](http://creacode.ru)  under the  [MIT license]().
