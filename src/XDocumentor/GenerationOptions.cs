@@ -7,7 +7,7 @@ namespace XDocumentor
     class GenerationOptions
     {
         public string Target { get; }
-        public string Output { get; } = "md";
+        public string Output { get; } = "markdown";
         public AccessibilityLevel AccessibilityLevel { get; } = AccessibilityLevel.All;
         public GenerationMode Mode { get; } = GenerationMode.FilePerClass;        
         public string NamespaceMatch { get; } = String.Empty;
@@ -15,8 +15,8 @@ namespace XDocumentor
         public GenerationOptions(string[] args)
         {
 #if DEBUG
-            Target = "Debug/Elibrary.Builder.dll";
-            Output = "Debug/md";
+            Target = "Debug/Some.dll";
+            Output = "Debug/markdown";
             AccessibilityLevel = AccessibilityLevel.PublicOnly;
             Mode = GenerationMode.FilePerClass;
             NamespaceMatch = String.Empty;
