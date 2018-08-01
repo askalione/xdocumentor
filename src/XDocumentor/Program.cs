@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using XDocumentor.Markdown;
 
@@ -11,38 +10,46 @@ namespace XDocumentor
     {
         static void Main(string[] args)
         {
-            GenerationOptions options = new GenerationOptions(args);
-
-            var types = MarkdownGenerator.BuildFrom(options.Target, options.NamespaceMatch, options.AccessibilityLevel);
-
-            if (types.Length == 0)
-                return;
-
-            if (!Directory.Exists(options.Output)) Directory.CreateDirectory(options.Output);
-            else
+            try
             {
-                DirectoryInfo directory = new DirectoryInfo(options.Output);
-                foreach (FileInfo file in directory.GetFiles()) file.Delete();
-                foreach (DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
-            }
+                GenerationOptions options = new GenerationOptions(args);
 
-            var homeBuilder = new MarkdownBuilder();
-            homeBuilder.Header(1, "Contents");
-            homeBuilder.AppendLine();
-            
-            switch (options.Mode)
+                var types = MarkdownGenerator.BuildFrom(options.Target, options.NamespaceMatch, options.AccessibilityLevel);
+
+                if (types.Length == 0)
+                    return;
+
+                if (!Directory.Exists(options.Output)) Directory.CreateDirectory(options.Output);
+                else
+                {
+                    DirectoryInfo directory = new DirectoryInfo(options.Output);
+                    foreach (FileInfo file in directory.GetFiles()) file.Delete();
+                    foreach (DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
+                }
+
+                var homeBuilder = new MarkdownBuilder();
+                homeBuilder.Header(1, "Contents");
+                homeBuilder.AppendLine();
+
+                switch (options.Mode)
+                {
+                    case GenerationMode.FilePerClass:
+                        GenerateFilePerClass(homeBuilder, options.Output, types);
+                        break;
+                    case GenerationMode.FilePerNamespace:
+                        GenerateFilePerNamespace(homeBuilder, options.Output, types);
+                        break;
+                    default:
+                        throw new Exception("Unknown generation mode");
+                }
+
+                File.WriteAllText(Path.Combine(options.Output, "Contents.md"), homeBuilder.ToString());
+            }
+            catch (Exception ex)
             {
-                case GenerationMode.FilePerClass:
-                    GenerateFilePerClass(homeBuilder, options.Output, types);
-                    break;
-                case GenerationMode.FilePerNamespace:
-                    GenerateFilePerNamespace(homeBuilder, options.Output, types);
-                    break;
-                default:
-                    throw new Exception("Unknown generation mode");
+                Console.WriteLine("An exception is thrown: " + GetFullExceptionMessage(ex));
+                Console.ReadKey();
             }
-
-            File.WriteAllText(Path.Combine(options.Output, "Home.md"), homeBuilder.ToString());
         }
 
         private static void GenerateFilePerClass(MarkdownBuilder homeBuilder, string dest, MarkdownableType[] types)
@@ -87,6 +94,13 @@ namespace XDocumentor
                 File.WriteAllText(Path.Combine(dest, g.Key + ".md"), sb.ToString());
                 homeBuilder.AppendLine();
             }
+        }
+
+        private static string GetFullExceptionMessage(Exception ex)
+        {
+            return ex.InnerException == null
+                 ? ex.Message
+                 : ex.Message + " --> " + GetFullExceptionMessage(ex.InnerException);
         }
     }
 }
