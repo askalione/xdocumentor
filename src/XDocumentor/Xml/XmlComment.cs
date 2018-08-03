@@ -11,7 +11,7 @@ namespace XDocumentor.Xml
         public string MemberName { get; set; }
         public string Summary { get; set; }
         public string Remarks { get; set; }
-        public Dictionary<string, string> Parameters { get; set; }
+        public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>();
         public string Returns { get; set; }
 
         public override string ToString()

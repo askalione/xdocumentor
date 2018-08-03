@@ -6,6 +6,7 @@ namespace XDocumentor.Xml
 {
     enum MemberType
     {
+        Constructor = 'C',
         Field = 'F',
         Property = 'P',
         Type = 'T',

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using XDocumentor.Markdown;
 
@@ -11,63 +10,46 @@ namespace XDocumentor
     {
         static void Main(string[] args)
         {
-            var target = "Debug/Elibrary.Builder.dll";
-            string dest = "Debug/md";
-            MarkdownGenerateMode generateMode = MarkdownGenerateMode.FilePerClass;
-            string namespaceMatch = string.Empty;
-            if (args.Length == 1)
+            try
             {
-                target = args[0];
-            }
-            else if (args.Length == 2)
-            {
-                target = args[0];
-                dest = args[1];
-            }
-            else if (args.Length == 3)
-            {
-                target = args[0];
-                dest = args[1];
-                generateMode = Enum.Parse<MarkdownGenerateMode>(args[2]);
-            }
-            else if (args.Length == 4)
-            {
-                target = args[0];
-                dest = args[1];
-                generateMode = Enum.Parse<MarkdownGenerateMode>(args[2]);
-                namespaceMatch = args[3];
-            }
+                GenerationOptions options = new GenerationOptions(args);
 
-            var types = MarkdownGenerator.BuildFrom(target, namespaceMatch);
+                var types = MarkdownGenerator.BuildFrom(options.Target, options.NamespaceMatch, options.AccessibilityLevel);
 
-            if (types.Length == 0)
-                return;
+                if (types.Length == 0)
+                    return;
 
-            if (!Directory.Exists(dest)) Directory.CreateDirectory(dest);
-            else
-            {
-                var directory = new DirectoryInfo(dest);
-                foreach (FileInfo file in directory.GetFiles()) file.Delete();
-                foreach (DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
+                if (!Directory.Exists(options.Output)) Directory.CreateDirectory(options.Output);
+                else
+                {
+                    DirectoryInfo directory = new DirectoryInfo(options.Output);
+                    foreach (FileInfo file in directory.GetFiles()) file.Delete();
+                    foreach (DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
+                }
+
+                var homeBuilder = new MarkdownBuilder();
+                homeBuilder.Header(1, "Contents");
+                homeBuilder.AppendLine();
+
+                switch (options.Mode)
+                {
+                    case GenerationMode.FilePerClass:
+                        GenerateFilePerClass(homeBuilder, options.Output, types);
+                        break;
+                    case GenerationMode.FilePerNamespace:
+                        GenerateFilePerNamespace(homeBuilder, options.Output, types);
+                        break;
+                    default:
+                        throw new Exception("Unknown generation mode");
+                }
+
+                File.WriteAllText(Path.Combine(options.Output, "Contents.md"), homeBuilder.ToString());
             }
-
-            var homeBuilder = new MarkdownBuilder();
-            homeBuilder.Header(1, "Contents");
-            homeBuilder.AppendLine();
-            
-            switch (generateMode)
+            catch (Exception ex)
             {
-                case MarkdownGenerateMode.FilePerClass:
-                    GenerateFilePerClass(homeBuilder, dest, types);
-                    break;
-                case MarkdownGenerateMode.FilePerNamespace:
-                    GenerateFilePerNamespace(homeBuilder, dest, types);
-                    break;
-                default:
-                    throw new Exception("Unknown MarkdownGenerateMode");
+                Console.WriteLine("An exception is thrown: " + GetFullExceptionMessage(ex));
+                Console.ReadKey();
             }
-
-            File.WriteAllText(Path.Combine(dest, "Home.md"), homeBuilder.ToString());
         }
 
         private static void GenerateFilePerClass(MarkdownBuilder homeBuilder, string dest, MarkdownableType[] types)
@@ -83,12 +65,11 @@ namespace XDocumentor
                 
                 foreach (var item in g.OrderBy(x => x.Name))
                 {
-                    string renderedDisplayName = item.DisplayName.Replace("<", "").Replace(">", "").Replace(",", "").Replace(" ", "-");
                     var sb = new StringBuilder();
-                    homeBuilder.ListLink(MarkdownHelper.RenderCode(item.DisplayName), g.Key + "/" + renderedDisplayName);
+                    homeBuilder.ListLink(MarkdownHelper.RenderCode(item.DisplayName), g.Key + "/" + item.ProcessedName);
                     sb.Append(item.ToString());
 
-                    File.WriteAllText(Path.Combine(namespacePath, renderedDisplayName + ".md"), sb.ToString());
+                    File.WriteAllText(Path.Combine(namespacePath, item.ProcessedName + ".md"), sb.ToString());
                 }
                                 
                 homeBuilder.AppendLine();
@@ -105,7 +86,7 @@ namespace XDocumentor
                 var sb = new StringBuilder();
                 foreach (var item in g.OrderBy(x => x.Name))
                 {
-                    homeBuilder.ListLink(MarkdownHelper.RenderCode(item.DisplayName), g.Key + "#" + item.DisplayName.Replace("<", "").Replace(">", "").Replace(",", "").Replace(" ", "-").ToLower());
+                    homeBuilder.ListLink(MarkdownHelper.RenderCode(item.DisplayName), g.Key + "#" + item.ProcessedName.ToLower());
 
                     sb.Append(item.ToString());
                 }
@@ -113,6 +94,13 @@ namespace XDocumentor
                 File.WriteAllText(Path.Combine(dest, g.Key + ".md"), sb.ToString());
                 homeBuilder.AppendLine();
             }
+        }
+
+        private static string GetFullExceptionMessage(Exception ex)
+        {
+            return ex.InnerException == null
+                 ? ex.Message
+                 : ex.Message + " --> " + GetFullExceptionMessage(ex.InnerException);
         }
     }
 }

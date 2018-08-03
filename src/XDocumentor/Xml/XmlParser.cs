@@ -51,16 +51,21 @@ namespace XDocumentor.Xml
                         ? match.Groups[2].Value + "." + match.Groups[3].Value
                         : match.Groups[2].Value;
 
-                    return new XmlComment
+                    XmlComment xmlComment = new XmlComment
                     {
                         MemberType = memberType,
                         ClassName = className,
-                        MemberName = match.Groups[3].Value,
+                        MemberName = match.Groups[3].Value.Replace("#", "."),
                         Summary = summary.Trim(),
                         Remarks = remarks.Trim(),
                         Parameters = parameters,
                         Returns = returns.Trim()
                     };
+
+                    if (xmlComment.MemberName.Equals(".ctor"))
+                        xmlComment.MemberType = MemberType.Constructor;
+
+                    return xmlComment;
                 })
                 .Where(x => x != null)
                 .ToArray();

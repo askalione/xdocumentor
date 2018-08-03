@@ -1,14 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeIdentifiers>win10-x64;ubuntu.16.10-x64;osx.10.11-x64</RuntimeIdentifiers>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Version>1.0.0</Version>
+    <Authors>Alexey Drapash</Authors>
+    <Company>Creacode</Company>
+    <Product>XDocumentor</Product>
+    <PackageId>XDocumentor</PackageId>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Description>Generate markdown from C# binary and xml document to Markdown</Description>
+    <Copyright>Copyright © 2018 Alexey Drapash</Copyright> 
+    <PackageTags>Xml Comments Markdown Documentation</PackageTags>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="App_Data\**" />
-    <EmbeddedResource Remove="App_Data\**" />
-    <None Remove="App_Data\**" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\dist\$(Version)\</OutputPath>
+  </PropertyGroup>
 
 </Project>

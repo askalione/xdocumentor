@@ -12,7 +12,7 @@ namespace XDocumentor.Markdown
 {
     static class MarkdownGenerator
     {
-        public static MarkdownableType[] BuildFrom(string dllPath, string namespaceMatch)
+        public static MarkdownableType[] BuildFrom(string dllPath, string namespaceMatch, AccessibilityLevel accessibilityLevel)
         {
             var xmlPath = Path.Combine(Directory.GetParent(dllPath).FullName, Path.GetFileNameWithoutExtension(dllPath) + ".xml");
 
@@ -23,8 +23,7 @@ namespace XDocumentor.Markdown
             }
             var commentsLookup = comments.ToLookup(x => x.ClassName);
 
-            var namespaceRegex =
-                !string.IsNullOrEmpty(namespaceMatch) ? new Regex(namespaceMatch) : null;
+            var namespaceRegex =!String.IsNullOrEmpty(namespaceMatch) ? new Regex(namespaceMatch) : null;
 
             var markdownableTypes = new[] { Assembly.LoadFrom(dllPath) }
                 .SelectMany(x =>
@@ -45,7 +44,7 @@ namespace XDocumentor.Markdown
                 .Where(x => x != null)
                 .Where(x => x.IsPublic && !typeof(Delegate).IsAssignableFrom(x) && !x.GetCustomAttributes<ObsoleteAttribute>().Any())
                 .Where(x => IsRequiredNamespace(x, namespaceRegex))
-                .Select(x => new MarkdownableType(x, commentsLookup))
+                .Select(x => new MarkdownableType(x, commentsLookup, accessibilityLevel))
                 .ToArray();
 
 
