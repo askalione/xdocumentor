@@ -6,13 +6,13 @@ Based on [MarkdownGenerator](https://github.com/neuecc/MarkdownGenerator) by [ne
 
 ## Example
 
-For generate Markdown put .dll and .xml project files in same directory with XDocumentor.exe and use command:
+To generate Markdown put .dll and .xml project files in the same directory with XDocumentor.exe and use command:
 
 ```csharp
 XDocumentor.exe MyProject.dll markdown 0 0
 ```
 
-After execution, a directory markdown with  Markdown files will be created in same directory.
+After execution, a directory markdown with  Markdown files will be created in the same directory.
 
 ## Arguments
 
