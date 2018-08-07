@@ -4,6 +4,8 @@
 
 Based on [MarkdownGenerator](https://github.com/neuecc/MarkdownGenerator) by [neuecc](https://github.com/neuecc).
 
+Для организации документации вашего software рекомендуется использовать extremly light and easy to use flat file CMS on .NET [Documentor](https://github.com/askalione/documentor).
+
 ## Example
 
 To generate Markdown put .dll and .xml project files in the same directory with XDocumentor.exe and use command:
