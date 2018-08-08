@@ -24,7 +24,7 @@ After execution, a directory markdown with  Markdown files will be created in th
 | Output (optional) | Output directory for generated Markdown files. | 
 | AccessibilityLevel (optional) | Which members was generated. 0 - All, 1 - Public only. | 
 | Mode (optional) | Generation mode. 0 - Generate file per namespace, 1- Generate file per class. |
-| NamespaceMatch | Regex pattern to select namespaces. |
+| NamespaceMatch(optional) | Regex pattern to select namespaces. |
 
 ## License
 
