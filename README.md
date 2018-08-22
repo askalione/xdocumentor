@@ -4,7 +4,7 @@
 
 Based on [MarkdownGenerator](https://github.com/neuecc/MarkdownGenerator) by [neuecc](https://github.com/neuecc).
 
-Для организации документации вашего software рекомендуется использовать extremly light and easy to use flat file CMS on .NET [Documentor](https://github.com/askalione/documentor).
+It’s recommended to use extremly light and easy to use flat file CMS on .NET [Documentor](https://github.com/askalione/documentor) for publish your documentation.
 
 ## Example
 
