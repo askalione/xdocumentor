@@ -4,6 +4,8 @@
 
 Based on [MarkdownGenerator](https://github.com/neuecc/MarkdownGenerator) by [neuecc](https://github.com/neuecc).
 
+It’s recommended to use extremly light and easy to use flat file CMS on .NET [Documentor](https://github.com/askalione/documentor) for publish your documentation.
+
 ## Example
 
 To generate Markdown put .dll and .xml project files in the same directory with XDocumentor.exe and use command:
@@ -22,7 +24,7 @@ After execution, a directory markdown with  Markdown files will be created in th
 | Output (optional) | Output directory for generated Markdown files. | 
 | AccessibilityLevel (optional) | Which members was generated. 0 - All, 1 - Public only. | 
 | Mode (optional) | Generation mode. 0 - Generate file per namespace, 1- Generate file per class. |
-| NamespaceMatch | Regex pattern to select namespaces. |
+| NamespaceMatch(optional) | Regex pattern to select namespaces. |
 
 ## License
 
